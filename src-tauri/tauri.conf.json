@@ -10,7 +10,6 @@
     "beforeBuildCommand": "npm run build"
   },
   "app": {
-    "title": "SerialScope",
     "windows": [
       {
         "title": "SerialScope - 无线通信设备调试工具",
@@ -36,9 +35,7 @@
     ],
     "windows": {
       "nsis": {
-        "installMode": "currentUser",
-        "installerIcon": "icons/icon.ico",
-        "displayIcon": "icons/icon.ico"
+        "installMode": "currentUser"
       }
     }
   }
