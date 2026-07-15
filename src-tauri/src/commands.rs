@@ -166,9 +166,9 @@ pub async fn stop_data_stream(
 #[tauri::command]
 pub async fn get_available_fields(
     state: State<'_, GlobalState>,
-) -> Vec<String> {
+) -> Result<Vec<String>, String> {
     let store = state.data_store.lock().await;
-    store.get_available_fields()
+    Ok(store.get_available_fields())
 }
 
 #[tauri::command]
@@ -176,7 +176,7 @@ pub async fn get_parsed_data(
     field: String,
     max_points: Option<usize>,
     state: State<'_, GlobalState>,
-) -> Vec<Vec<f64>> {
+) -> Result<Vec<Vec<f64>>, String> {
     let store = state.data_store.lock().await;
     let points = store.get_field(&field);
 
@@ -188,7 +188,7 @@ pub async fn get_parsed_data(
         points
     };
 
-    sampled.into_iter().map(|(t, v)| vec![t, v]).collect()
+    Ok(sampled.into_iter().map(|(t, v)| vec![t, v]).collect())
 }
 
 fn result_to_datapoint(result: &ParsedResult) -> DataPoint {

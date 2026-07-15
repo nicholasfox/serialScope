@@ -1,4 +1,4 @@
-use tokio_serial::SerialStream;
+use tokio_serial::{SerialPortBuilderExt, SerialStream};
 
 pub struct SerialSource {
     port_name: String,
