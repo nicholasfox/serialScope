@@ -26,7 +26,9 @@ export default function App() {
       <div className="app-layout">
         <aside className="sidebar">
           <ConnectionPanel />
-          <FieldSelector />
+          <div className="sidebar-scroll">
+            <FieldSelector />
+          </div>
         </aside>
         <main className="main-content">
           <WaveformChart />

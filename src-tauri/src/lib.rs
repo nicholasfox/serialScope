@@ -1,5 +1,6 @@
 mod commands;
 mod data_store;
+mod file_source;
 mod parser;
 mod serial_source;
 
@@ -15,6 +16,8 @@ pub fn run() {
             commands::disconnect_serial,
             commands::start_data_stream,
             commands::stop_data_stream,
+            commands::start_file_stream,
+            commands::stop_file_stream,
             commands::get_available_fields,
             commands::get_parsed_data,
         ])

@@ -28,3 +28,6 @@ src-tauri/target/
 
 # Generated icons (can be regenerated)
 src-tauri/icons/icon.icns
+
+# Tauri 2 generated code (schemas, bindings)
+src-tauri/gen/

@@ -2,12 +2,21 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
+use crate::parser::ParsedResult;
+
 pub type SharedDataStore = Arc<Mutex<DataStore>>;
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct DataPoint {
     pub timestamp: f64,
     pub fields: HashMap<String, f64>,
+}
+
+pub fn result_to_datapoint(result: &ParsedResult) -> DataPoint {
+    DataPoint {
+        timestamp: result.timestamp,
+        fields: result.numeric_fields.clone(),
+    }
 }
 
 pub struct DataStore {

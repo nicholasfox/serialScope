@@ -46,7 +46,7 @@ pub async fn read_line_from_port(port: &mut BufferedPort) -> Result<String, Stri
 }
 
 pub fn list_available_ports() -> Vec<SerialPortInfo> {
-    tokio_serial::available_ports()
+    let mut ports: Vec<SerialPortInfo> = tokio_serial::available_ports()
         .map(|ports| {
             ports
                 .into_iter()
@@ -56,5 +56,19 @@ pub fn list_available_ports() -> Vec<SerialPortInfo> {
                 })
                 .collect()
         })
-        .unwrap_or_default()
+        .unwrap_or_default();
+
+    if ports.is_empty() {
+        for i in 0..=7 {
+            let name = format!("/dev/ttyS{}", i);
+            if std::path::Path::new(&name).exists() {
+                ports.push(SerialPortInfo {
+                    name,
+                    available: true,
+                });
+            }
+        }
+    }
+
+    ports
 }

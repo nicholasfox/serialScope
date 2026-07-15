@@ -2,8 +2,9 @@ use std::sync::Arc;
 use tauri::{AppHandle, Emitter, State};
 use tokio::sync::Mutex;
 
-use crate::data_store::{create_shared_store, DataPoint, SharedDataStore};
-use crate::parser::{Parser, ParserConfig, ParsedResult};
+use crate::data_store::{create_shared_store, result_to_datapoint, SharedDataStore};
+use crate::file_source;
+use crate::parser::{Parser, ParserConfig};
 use crate::serial_source;
 
 struct AppState {
@@ -20,6 +21,8 @@ pub struct GlobalState {
     pub config: Arc<Mutex<ParserConfig>>,
     pub port: Arc<Mutex<Option<serial_source::BufferedPort>>>,
     pub stream_handle: Arc<Mutex<Option<tokio::task::JoinHandle<()>>>>,
+    pub file_stream_handle: Arc<Mutex<Option<tokio::task::JoinHandle<()>>>>,
+    pub file_stop_flag: Arc<Mutex<bool>>,
 }
 
 impl Default for GlobalState {
@@ -36,6 +39,8 @@ impl Default for GlobalState {
             config: Arc::new(Mutex::new(ParserConfig::default_config("default"))),
             port: Arc::new(Mutex::new(None)),
             stream_handle: Arc::new(Mutex::new(None)),
+            file_stream_handle: Arc::new(Mutex::new(None)),
+            file_stop_flag: Arc::new(Mutex::new(false)),
         }
     }
 }
@@ -191,9 +196,62 @@ pub async fn get_parsed_data(
     Ok(sampled.into_iter().map(|(t, v)| vec![t, v]).collect())
 }
 
-fn result_to_datapoint(result: &ParsedResult) -> DataPoint {
-    DataPoint {
-        timestamp: result.timestamp,
-        fields: result.numeric_fields.clone(),
+#[tauri::command]
+pub async fn start_file_stream(
+    app: AppHandle,
+    state: State<'_, GlobalState>,
+    file_path: String,
+    interval_ms: Option<u64>,
+) -> Result<String, String> {
+    let mut handle = state.file_stream_handle.lock().await;
+    if let Some(h) = handle.as_ref() {
+        if h.is_finished() {
+            handle.take();
+        } else {
+            return Err("File stream already running".to_string());
+        }
     }
+
+    let mut stop_flag = state.file_stop_flag.lock().await;
+    *stop_flag = false;
+    drop(stop_flag);
+
+    let app = app.clone();
+    let data_store = state.data_store.clone();
+    let parser = state.parser.clone();
+    let config = state.config.clone();
+    let stop_flag = state.file_stop_flag.clone();
+    let interval = interval_ms.unwrap_or(250);
+
+    let h = tokio::spawn(async move {
+        file_source::run_file_stream(
+            app,
+            file_path,
+            interval,
+            data_store,
+            parser,
+            config,
+            stop_flag,
+        )
+        .await;
+    });
+
+    *handle = Some(h);
+    Ok("File stream started".to_string())
+}
+
+#[tauri::command]
+pub async fn stop_file_stream(
+    state: State<'_, GlobalState>,
+) -> Result<String, String> {
+    let mut stop_flag = state.file_stop_flag.lock().await;
+    *stop_flag = true;
+    drop(stop_flag);
+
+    let mut handle = state.file_stream_handle.lock().await;
+    if let Some(h) = handle.take() {
+        h.abort();
+    }
+
+    Ok("File stream stopped".to_string())
 }

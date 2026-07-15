@@ -110,6 +110,11 @@ body {
   gap: 1px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.sidebar-scroll {
+  flex: 1;
   overflow-y: auto;
 }
 
@@ -142,6 +147,16 @@ body {
   font-style: italic;
 }
 
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4 L10 4 L6 9 Z' fill='%238b8d97'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 12px;
+  padding-right: 24px;
+}
+
 /* Connection panel */
 .connection-panel .field-group {
   margin-bottom: 8px;
@@ -169,6 +184,38 @@ body {
 .connection-panel select:focus,
 .connection-panel input:focus {
   border-color: var(--accent);
+}
+
+.source-tabs {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.source-tabs .tab {
+  flex: 1;
+  padding: 6px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.source-tabs .tab:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.source-tabs .tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.source-tabs .tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .connection-panel button {
@@ -212,6 +259,17 @@ body {
 .status-badge.connected {
   background: rgba(82, 196, 26, 0.15);
   color: var(--success);
+}
+
+.error-message {
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: rgba(227, 74, 74, 0.15);
+  border: 1px solid rgba(227, 74, 74, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--danger);
+  font-size: 11px;
+  word-break: break-word;
 }
 
 /* Field selector */
@@ -260,6 +318,29 @@ body {
   flex-direction: column;
   margin-bottom: 0;
   min-height: 300px;
+}
+
+.waveform-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+
+.waveform-toolbar label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.waveform-toolbar select {
+  padding: 2px 6px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 11px;
+  outline: none;
 }
 
 .chart-container {
