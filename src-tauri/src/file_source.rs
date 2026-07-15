@@ -77,12 +77,14 @@ pub async fn run_file_stream(
 
                 let fields = result.numeric_fields.clone();
                 let raw = result.raw.clone();
+                let parsed = serde_json::to_string(&result).unwrap_or_default();
 
                 drop(parser);
                 drop(config);
 
                 let _ = app.emit("data-point", fields);
                 let _ = app.emit("raw-line", raw);
+                let _ = app.emit("parsed-line", parsed);
             } else {
                 let _ = app.emit("raw-line", line.clone());
             }

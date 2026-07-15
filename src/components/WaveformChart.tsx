@@ -33,13 +33,14 @@ function buildSeries(
       symbol: 'circle',
       symbolSize: 3,
       smooth: false,
-      lineStyle: { width: 1.5 },
+      lineStyle: { width: 1.5, type: field.lineStyle },
       data,
       color: field.color,
       connectNulls: false,
       animation: false,
       endLabel: {
         show: true,
+        position: 'right',
         formatter: (params: any) => {
           const v = params.value?.[1]
           return v !== undefined ? `${field.name}=${v}` : ''

@@ -9,6 +9,7 @@ pub struct ParserConfig {
     pub delimiter: Option<String>,
     pub group_chars: Option<Vec<String>>,
     pub fields: Vec<FieldConfig>,
+    pub line_filters: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -59,6 +60,15 @@ impl Parser {
         use chrono::Utc;
 
         let timestamp = Utc::now().timestamp_millis() as f64 / 1000.0;
+
+        if !config.line_filters.is_empty() {
+            let trimmed = line.trim();
+            let matched = config.line_filters.iter()
+                .any(|f| trimmed.starts_with(f.as_str()));
+            if !matched {
+                return None;
+            }
+        }
 
         let content = if let Some(ref prefix) = config.line_prefix {
             line.trim().strip_prefix(prefix.as_str())?.trim()
@@ -171,6 +181,7 @@ mod tests {
             delimiter: Some(",".to_string()),
             group_chars: None,
             fields: vec![],
+            line_filters: vec![],
         };
 
         let result = parser.parse_line("TAG: rssi=-45,ber=0.02,freq=2400", &config);
@@ -190,6 +201,7 @@ mod tests {
             delimiter: None,
             group_chars: None,
             fields: vec![],
+            line_filters: vec![],
         };
 
         let result = parser.parse_line("channels={13,11,11,2,1,1,1},rssi=-45", &config);
@@ -249,6 +261,7 @@ impl ParserConfig {
             delimiter: Some(",".to_string()),
             group_chars: None,
             fields: vec![],
+            line_filters: vec![],
         }
     }
 }

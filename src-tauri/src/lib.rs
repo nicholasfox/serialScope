@@ -18,6 +18,7 @@ pub fn run() {
             commands::stop_data_stream,
             commands::start_file_stream,
             commands::stop_file_stream,
+            commands::set_line_filters,
             commands::get_available_fields,
             commands::get_parsed_data,
         ])

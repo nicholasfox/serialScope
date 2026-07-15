@@ -11,10 +11,13 @@ export interface ParsedData {
   array_fields: Record<string, number[]>
 }
 
+export type LineStyleConfig = 'solid' | number[]
+
 export interface FieldSelectorOption {
   name: string
   selected: boolean
   color: string
+  lineStyle: LineStyleConfig
 }
 
 export interface ConnectionConfig {

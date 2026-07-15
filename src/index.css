@@ -298,17 +298,117 @@ select {
   accent-color: var(--accent);
 }
 
+.filter-input {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.selected-list {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  min-height: 32px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.available-list {
+  min-height: 32px;
+}
+
+.field-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 10px;
+  margin: 2px 4px 2px 0;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border-left: 3px solid;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.selected-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.selected-row:hover {
+  background: var(--bg-hover);
+}
+
+.color-picker-wrap {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.color-picker-wrap input[type="color"] {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+}
+
+.line-style-select {
+  padding: 1px 2px;
+  font-size: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  outline: none;
+  flex-shrink: 0;
+  width: 44px;
+  text-align: center;
+}
+
+.line-style-select:focus {
+  border-color: var(--accent);
+}
+
+.field-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.chip-remove:hover {
+  color: var(--danger);
+}
+
 .color-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
-}
-
-.field-name {
-  color: var(--text-primary);
-  font-family: var(--font-mono);
-  font-size: 11px;
 }
 
 /* Waveform panel */
@@ -355,6 +455,36 @@ select {
   display: flex;
   flex-direction: column;
   margin-top: 4px;
+}
+
+.log-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.log-tabs .tab {
+  padding: 1px 10px;
+  font-size: 11px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.log-tabs .tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.log-tabs .tab:hover:not(.active) {
+  background: var(--bg-hover);
+}
+
+.parsed-fields {
+  color: var(--text-primary);
 }
 
 .log-container {

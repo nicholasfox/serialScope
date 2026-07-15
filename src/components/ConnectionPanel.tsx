@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { useStore } from '../store/useStore'
-import type { SerialPortInfo } from '../types'
+import type { ParsedData, SerialPortInfo } from '../types'
 
 export default function ConnectionPanel() {
   const {
-    sourceType, connected, connecting, portName, baudRate, filePath, error,
+    sourceType, connected, connecting, portName, baudRate, filePath, lineFilter, error,
     setSourceType, setConnected, setConnecting, setPortName, setBaudRate,
-    setFilePath, setStreaming, addRawLog, addDataPoint, updateFields,
+    setFilePath, setStreaming, addRawLog, addParsedLog, addDataPoint, updateFields,
     setError, resetConnection,
   } = useStore()
 
@@ -49,6 +49,13 @@ export default function ConnectionPanel() {
       addRawLog(event.payload)
     })
 
+    const unsubParsed = listen<string>('parsed-line', (event) => {
+      try {
+        const parsed: ParsedData = JSON.parse(event.payload)
+        addParsedLog(parsed)
+      } catch { /* ignore parse errors */ }
+    })
+
     const unsub3 = listen<string>('source-error', (event) => {
       setError(event.payload)
     })
@@ -60,6 +67,7 @@ export default function ConnectionPanel() {
     return () => {
       unsub1.then((f) => f())
       unsub2.then((f) => f())
+      unsubParsed.then((f) => f())
       unsub3.then((f) => f())
       unsub4.then((f) => f())
     }
@@ -76,12 +84,21 @@ export default function ConnectionPanel() {
     }
   }
 
+  const syncLineFilter = () => {
+    const filters = lineFilter
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    invoke('set_line_filters', { filters }).catch(() => {})
+  }
+
   const handleConnectSerial = async () => {
     setConnecting(true)
     setError(null)
     try {
       const p = portName || customPort
       if (!p) throw new Error('No port selected')
+      syncLineFilter()
       await invoke('stop_file_stream').catch(() => {})
       await invoke('connect_serial', { portName: p, baudRate })
       setConnected(true)
@@ -100,6 +117,7 @@ export default function ConnectionPanel() {
     setError(null)
     try {
       if (!filePath) throw new Error('No file path specified')
+      syncLineFilter()
       await invoke('stop_file_stream').catch(() => {})
       await invoke('start_file_stream', { filePath, intervalMs: 250 })
       setConnected(true)

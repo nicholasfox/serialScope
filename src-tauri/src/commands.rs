@@ -126,12 +126,14 @@ pub async fn start_data_stream(
 
                             let fields = result.numeric_fields.clone();
                             let raw = result.raw.clone();
+                            let parsed = serde_json::to_string(&result).unwrap_or_default();
 
                             drop(parser);
                             drop(config);
 
                             let _ = app_handle.emit("data-point", fields);
                             let _ = app_handle.emit("raw-line", raw);
+                            let _ = app_handle.emit("parsed-line", parsed);
                         }
                     }
                     Err(_) => {
@@ -238,6 +240,16 @@ pub async fn start_file_stream(
 
     *handle = Some(h);
     Ok("File stream started".to_string())
+}
+
+#[tauri::command]
+pub async fn set_line_filters(
+    filters: Vec<String>,
+    state: State<'_, GlobalState>,
+) -> Result<(), String> {
+    let mut config = state.config.lock().await;
+    config.line_filters = filters;
+    Ok(())
 }
 
 #[tauri::command]
