@@ -2,14 +2,24 @@ import { create } from 'zustand'
 import type { FieldSelectorOption, DataPoint } from '../types'
 
 const COLORS = [
-  '#0072B2',  // blue
-  '#E69F00',  // orange
-  '#009E73',  // green
-  '#F0E442',  // yellow
-  '#56B4E9',  // sky blue
-  '#D55E00',  // vermillion
-  '#CC79A7',  // pink
-  '#999999',  // grey
+  // Paul Tol's bright scheme (7 colors, colorblind-safe)
+  '#4477AA',  // blue
+  '#EE6677',  // red
+  '#228833',  // green
+  '#CCBB44',  // yellow
+  '#66CCEE',  // cyan
+  '#AA3377',  // purple
+  '#BBBBBB',  // grey
+  // Extended with Paul Tol's muted scheme when >7 curves
+  '#332288',  // indigo
+  '#44AA99',  // teal
+  '#DDCC77',  // sand
+  '#882255',  // wine
+  '#999933',  // olive
+  '#CC6677',  // rose
+  '#117733',  // dark green
+  '#88CCEE',  // light cyan
+  '#AA4499',  // magenta
 ]
 
 type SourceType = 'serial' | 'file'
